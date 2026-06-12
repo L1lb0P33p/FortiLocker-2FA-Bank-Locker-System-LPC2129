@@ -1,45 +1,74 @@
-# FortiLocker-2FA-Bank-Locker-System-LPC2129
-FortiLocker is an ARM7 LPC2129-based secure bank locker access control system that uses Two-Factor Authentication (Password + OTP) for enhanced security. The system integrates a 4x4 keypad, 16x2 LCD, SIM900 GSM module, buzzer, and DC motor to provide secure locker access, OTP verification, intrusion alerts, and automated locker operation.
-✔ Password Authentication
-✔ OTP Verification using GSM SIM900
-✔ Two-Factor Authentication (2FA)
-✔ 4x4 Matrix Keypad Interface
-✔ 16x2 LCD Display
-✔ Intrusion Detection Alert
-✔ Buzzer Security Alarm
-✔ DC Motor Based Locker Control
-✔ 3 Wrong Attempts Protection
-✔ SMS Alert on Unauthorized Access
-✔ ARM7 LPC2129 Microcontroller
+Overview
 
-Working Principle
-Step 1: System Initialization
-LPC2129 initializes LCD, Keypad, GSM module, Buzzer, and Motor.
-Project title "FORTILOCKER" is displayed on the LCD.
-Step 2: Password Authentication
-User enters a 4-digit password using the keypad.
-LCD displays * instead of actual digits.
-If password is incorrect:
-Attempt count increases.
-Remaining attempts are displayed.
-Buzzer sounds.
-Step 3: OTP Generation
-If the password is correct:
-LPC2129 generates a 4-digit OTP.
-OTP is sent to the registered mobile number via SIM900 GSM.
-Step 4: OTP Verification
-User enters the received OTP.
-System compares entered OTP with generated OTP.
-Step 5: Access Granted
-If OTP matches:
-LCD displays "ACCESS GRANTED".
-DC motor rotates to unlock the locker.
-After a predefined time, the motor rotates back to lock the locker.
-Step 6: Security Protection
-If OTP is incorrect:
-Buzzer activates for 10 seconds.
-If password is entered incorrectly three times:
-LCD displays "TRY AFTER 24 HRS".
-Alert SMS is sent.
-System enters lock mode.
+FortiLocker is an ARM7 LPC2129-based bank locker security system that provides secure access through Two-Factor Authentication (2FA). The system verifies the user using a password and a One-Time Password (OTP) sent via a GSM module.
 
+Features
+
+* Password-based authentication using a 4x4 keypad
+* OTP generation and verification
+* GSM-based SMS notification using SIM900
+* Two-Factor Authentication (2FA)
+* LCD display for user interaction
+* Buzzer alert for invalid access attempts
+* DC motor-based locker control
+* Automatic system lock after three incorrect password attempts
+* SMS alert for unauthorized access attempts
+
+ Hardware Components
+
+* LPC2129 ARM7 Microcontroller
+* 4x4 Matrix Keypad
+* 16x2 LCD Display
+* SIM900 GSM Module
+* DC Motor
+* Buzzer
+* Motor Driver Circuit
+* Power Supply Unit
+
+ Software Requirements
+
+* Keil µVision
+* Embedded C
+* Flash Magic
+
+ Working Principle
+
+1. System initializes all peripherals.
+2. User enters the password through the keypad.
+3. Password is verified by the LPC2129.
+4. If the password is correct, an OTP is generated.
+5. OTP is sent to the registered mobile number via GSM.
+6. User enters the received OTP.
+7. OTP is verified by the controller.
+8. If OTP is correct, the locker is opened using the DC motor.
+9. After a predefined time, the locker is closed automatically.
+10. If the password or OTP is incorrect, the buzzer is activated.
+11. After three incorrect password attempts, the system is locked and an alert SMS is sent.
+
+ Block Diagram
+
+4x4 Keypad
+|
+v
++------------------+
+| LPC2129 ARM7 MCU |
++--+----+----+-----+
+|    |    |
+|    |    +------> DC Motor
+|    |
+|    +-----------> Buzzer
+|
++--> LCD Display
+|
++--> SIM900 GSM
+|
+v
+OTP SMS
+
+ Applications
+
+* Bank Locker Security
+* Smart Safe Lockers
+* Office Security Systems
+* Home Security Lockers
+* Access Control Systems
