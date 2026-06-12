@@ -43,24 +43,3 @@ LCD displays "TRY AFTER 24 HRS".
 Alert SMS is sent.
 System enters lock mode.
 
-
-                 +------------------+
-                 |  4x4 KEYPAD      |
-                 +--------+---------+
-                          |
-                          v
-+------------------------------------------------+
-|            LPC2129 ARM7 CONTROLLER             |
-|                                                |
-|  Password Verification                         |
-|  OTP Generation                                |
-|  Access Control Logic                          |
-+----+------------+------------+------------+----+
-     |            |            |            |
-     v            v            v            v
-
-+---------+  +---------+  +---------+  +---------+
-|  LCD    |  | SIM900  |  | BUZZER  |  | DC MOTOR|
-| Display |  |   GSM   |  | Security|  | Locker  |
-| Status  |  |  Module |  |  Alert  |  | Control |
-+---------+  +---------+  +---------+  +---------+
