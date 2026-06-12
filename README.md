@@ -33,37 +33,52 @@ Features
 
  Working Principle
 
-1. System initializes all peripherals.
-2. User enters the password through the keypad.
-3. Password is verified by the LPC2129.
-4. If the password is correct, an OTP is generated.
-5. OTP is sent to the registered mobile number via GSM.
-6. User enters the received OTP.
-7. OTP is verified by the controller.
-8. If OTP is correct, the locker is opened using the DC motor.
-9. After a predefined time, the locker is closed automatically.
-10. If the password or OTP is incorrect, the buzzer is activated.
-11. After three incorrect password attempts, the system is locked and an alert SMS is sent.
+ Step 1: System Initialization
+  - LPC2129 initializes the LCD, Keypad, GSM module, Buzzer, and DC Motor.
+  - The project title **"FORTILOCKER"** is displayed on the LCD.
 
- Block Diagram
+ Step 2: Password Authentication
+  - The user enters a 4-digit password using the 4x4 keypad.
+  - The LCD displays `*` characters instead of the actual password digits.
+  - The entered password is compared with the stored password.
+  - If the password is incorrect:
+  - The attempt counter is incremented.
+  - The remaining attempts are displayed on the LCD.
+  - The buzzer is activated as a warning.
 
-4x4 Keypad
-|
-v
-+------------------+
-| LPC2129 ARM7 MCU |
-+--+----+----+-----+
-|    |    |
-|    |    +------> DC Motor
-|    |
-|    +-----------> Buzzer
-|
-+--> LCD Display
-|
-+--> SIM900 GSM
-|
-v
-OTP SMS
+Step 3: OTP Generation and Transmission
+  - If the password is correct:
+  - The LPC2129 generates a random 4-digit OTP.
+  - The OTP is sent to the registered mobile number through the SIM900 GSM module.
+  - The LCD displays **"OTP SENDING"**.
+
+ Step 4: OTP Verification
+- The user enters the received OTP through the keypad.
+- The system compares the entered OTP with the generated OTP.
+- Access is granted only if both OTPs match.
+
+ Step 5: Locker Access Control
+- If OTP verification is successful:
+  - The LCD displays **"ACCESS GRANTED"**.
+  - The DC motor rotates in the forward direction to unlock the locker.
+  - The locker remains open for a predefined duration.
+  - The DC motor then rotates in the reverse direction to lock the locker automatically.
+  - The LCD displays **"LOCKER CLOSED"**.
+
+ Step 6: Security Protection
+- If an incorrect OTP is entered:
+  - The LCD displays **"INVALID OTP"**.
+  - The buzzer is activated for 10 seconds.
+
+- If an incorrect password is entered:
+  - The system displays the number of remaining attempts.
+  - The buzzer is activated.
+
+- After three consecutive incorrect password attempts:
+  - The LCD displays **"TRY AFTER 24 HRS"**.
+  - An alert SMS is sent to the registered mobile number.
+  - The buzzer is activated.
+  - The system enters lock mode to prevent unauthorized access.
 
  Applications
 
