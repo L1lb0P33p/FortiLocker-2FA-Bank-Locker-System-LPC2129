@@ -9,6 +9,7 @@
 #define M1      (1<<20)
 #define M2      (1<<21)
 #define BUZZER  (1<<19)
+#define LED     (1<<18)
 
 char password[] = "1213";
 char password_enter[5];
@@ -21,25 +22,21 @@ int otp_num;
 void get_password(char *);
 void get_otp(char *);
 void generate_otp(void);
-
-
-
 void buzzer_on(void);
 void buzzer_off(void);
-
 void locker_open(void);
 void locker_close(void);
 
 int main()
 {
-  IODIR0 |= M1 | M2 | BUZZER;
+  IODIR0 |= M1 | M2 | BUZZER |LED;
 
     LCD_INIT();
     UART0_CONFIG();
-UART0_STR("testing");
-    scroll_title("FORTILOCKER");
-T1PR=0;
-T1TCR=0x01;
+	  UART0_STR("testing");
+    scroll_title("FORTILOCKERS");
+	T1PR=0;
+	T1TCR=0x01;
 
     while(1)
     {
@@ -68,25 +65,41 @@ T1TCR=0x01;
 
             get_otp(otp_enter);
 
-            if(strcmp(otp_enter,otp)==0)
-            {
-                LCD_COMMAND(0x01);
-                LCD_STR("ACCESS GRANTED");
+           if(strcmp(otp_enter,otp)==0)
+{
+    int sec;
 
-                locker_open();
+    LCD_COMMAND(0x01);
+    LCD_STR("ACCESS GRANTED");
+    delay_sec(2);
 
-                LCD_COMMAND(0x01);
-                LCD_STR("LOCKER OPEN");
+    locker_open();
 
-                delay_sec(5);
+    for(sec=10; sec>0; sec--)
+    {
+        LCD_COMMAND(0x01);
+        LCD_STR("LOCKER OPEN");
 
-                locker_close();
+        LCD_COMMAND(0xC0);
+        LCD_STR("TIME:");
 
-                LCD_COMMAND(0x01);
-                LCD_STR("LOCKER CLOSED");
+        LCD_DATA((sec/10)+'0');
+        LCD_DATA((sec%10)+'0');
+        LCD_DATA('S');
 
-                delay_sec(2);
-            }
+        IOSET0 = LED;      // LED ON
+        delay_ms(500);
+
+        IOCLR0 = LED;      // LED OFF
+        delay_ms(500);
+		}
+    
+    locker_close();
+    IOCLR0 = LED;
+    LCD_COMMAND(0x01);
+    LCD_STR("LOCKER CLOSED");
+    delay_sec(2);
+}
             else
             {
                 LCD_COMMAND(0x01);
@@ -147,7 +160,7 @@ void get_password(char *s)
     for(i=0;i<4;i++)
     {
         s[i] = keyscan();
-UART0_TX(s[i]);
+		UART0_TX(s[i]);
         LCD_DATA('*');
         delay_ms(200);
     }
@@ -163,7 +176,7 @@ void get_otp(char *p)
     for(i=0;i<4;i++)
     {
         p[i] = keyscan();
-UART0_TX(p[i]);
+		UART0_TX(p[i]);
         LCD_DATA('*');
         delay_ms(200);
     }
@@ -175,7 +188,7 @@ UART0_TX(p[i]);
 void generate_otp(void)
 {
     int i,temp;
-unsigned int s =T1TC;
+	unsigned int s =T1TC;
 
    otp_num=((s>>3)^(s>>7)^s)%9000 + 1000;
 
@@ -189,6 +202,23 @@ unsigned int s =T1TC;
 
     otp[4] = '\0';
 }
+/*void generate_otp(void)
+{
+    int i,temp;
+
+    otp_num = (T1TC % 9000) + 1000;
+
+    temp = otp_num;
+
+    for(i=3;i>=0;i--)
+    {
+        otp[i] = (temp%10) + '0';
+        temp /= 10;
+    }
+
+    otp[4] = '\0';
+}
+*/
 
 /* BUZZER */
 void buzzer_on(void)
@@ -199,6 +229,30 @@ void buzzer_on(void)
 void buzzer_off(void)
 {
     IOCLR0 = BUZZER;
+}
+
+/* LOCKER OPEN */
+void locker_open(void)
+{
+    IOSET0 = M1;
+    IOCLR0 = M2;
+
+    delay_sec(3);
+
+    IOCLR0 = M1;
+}
+
+/* LOCKER CLOSE */
+void locker_close(void)
+{
+    IOSET0 = M2;
+    IOCLR0 = M1;
+
+    delay_sec(3);
+
+    IOCLR0 = M2;
+}
+
 }
 
 /* LOCKER OPEN */
